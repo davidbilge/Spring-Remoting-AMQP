@@ -24,7 +24,8 @@
 	</licenses>
 	
 	<scm>
-		<connection>https://github.com/davidbilge/Spring-Remoting-AMQP.git</connection>
+		<connection>scm:git:https://github.com/davidbilge/Spring-Remoting-AMQP.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:davidbilge/Spring-Remoting-AMQP.git</developerConnection>x
 		<url>https://github.com/davidbilge/Spring-Remoting-AMQP</url>
 	</scm>
 
