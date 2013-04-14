@@ -20,7 +20,6 @@ Let's assume that you created a service interface called `MyService` and an acco
 	<rabbit:connection-factory id="connectionFactory" />
 	<rabbit:template id="amqpTemplate" connection-factory="connectionFactory" reply-timeout="50000" />
 	<rabbit:admin id="rabbitAdmin" connection-factory="connectionFactory" />
-	<rabbit:direct-exchange name="testxchange" />
 	
 	<!-- service config -->
 	<bean id="myService" class="x.y.z.MyServiceImpl" />
@@ -49,7 +48,6 @@ On the client-side, use a configuration like this:
 	<rabbit:connection-factory id="connectionFactory" />
 	<rabbit:template id="amqpTemplate" connection-factory="connectionFactory" reply-timeout="50000" />
 	<rabbit:admin id="rabbitAdmin" connection-factory="connectionFactory" />
-	<rabbit:direct-exchange name="testxchange" />
 	
 	<!--  client config -->
 	<bean id="myServiceProxy" class="de.davidbilge.spring.remoting.amqp.client.AmqpProxyFactoryBean">

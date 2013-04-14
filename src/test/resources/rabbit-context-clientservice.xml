@@ -8,7 +8,6 @@
 	<rabbit:connection-factory id="connectionFactory" />
 	<rabbit:template id="amqpTemplate" connection-factory="connectionFactory" reply-timeout="50000" />
 	<rabbit:admin id="rabbitAdmin" connection-factory="connectionFactory" />
-	<rabbit:direct-exchange name="testxchange" />
 	
 	<context:annotation-config />
 
