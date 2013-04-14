@@ -37,7 +37,6 @@ import org.springframework.remoting.rmi.RmiServiceExporter;
  * @author David Bilge
  * @since 13.04.2013
  * @see #setServiceInterface
- * @see #setServiceUrl
  * @see AmqpClientInterceptor
  * @see RmiServiceExporter
  * @see org.springframework.remoting.RemoteAccessException
