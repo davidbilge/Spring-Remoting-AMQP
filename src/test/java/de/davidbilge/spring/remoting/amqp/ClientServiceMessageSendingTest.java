@@ -35,6 +35,11 @@ public class ClientServiceMessageSendingTest extends AbstractJUnit4SpringContext
 	private TestServiceInterface testServiceProxy;
 
 	@Test
+	public void testContextStartup() {
+
+	}
+
+	@Test
 	public void testSendMessage() {
 		Assert.assertEquals("Echo Test123", testServiceProxy.simpleStringReturningTestMethod("Test123"));
 
