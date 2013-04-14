@@ -25,7 +25,7 @@
 	
 	<scm>
 		<connection>scm:git:https://github.com/davidbilge/Spring-Remoting-AMQP.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com:davidbilge/Spring-Remoting-AMQP.git</developerConnection>
+		<developerConnection>scm:git:https://github.com/davidbilge/Spring-Remoting-AMQP.git</developerConnection>
 		<url>https://github.com/davidbilge/Spring-Remoting-AMQP</url>
 	</scm>
 
