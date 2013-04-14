@@ -73,7 +73,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.version>3.2.1.RELEASE</spring.version>
+		<spring.version>[3.0.0.RELEASE,)</spring.version>
+		<spring.aqmp.version>1.1.4.RELEASE</spring.aqmp.version>
 		<slf4j.version>1.5.8</slf4j.version>
 	</properties>
 
@@ -86,12 +87,12 @@
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-amqp</artifactId>
-			<version>1.1.4.RELEASE</version>
+			<version>${spring.aqmp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-rabbit</artifactId>
-			<version>1.1.4.RELEASE</version>
+			<version>${spring.aqmp.version}</version>
 		</dependency>
 
 		<dependency>
