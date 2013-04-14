@@ -25,6 +25,7 @@ Let's assume that you created a service interface called `MyService` and an acco
 	<!-- service config -->
 	<bean id="myService" class="x.y.z.MyServiceImpl" />
 	<bean id="amqpMyServiceExporter" class="de.davidbilge.spring.remoting.amqp.service.AmqpServiceExporter">
+		<property name="rabbitAdmin" ref="rabbitAdmin" />
 		<property name="amqpTemplate" ref="amqpTemplate" />
 		<property name="connectionFactory" ref="connectionFactory" />
 		<property name="service" ref="myService" />

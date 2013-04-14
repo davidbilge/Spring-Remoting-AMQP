@@ -23,6 +23,7 @@
 	<!-- service config -->
 	<bean id="testService" class="de.davidbilge.spring.remoting.amqp.clientservice.TestServiceImpl" />
 	<bean id="amqpTestServiceExporter" class="de.davidbilge.spring.remoting.amqp.service.AmqpServiceExporter">
+		<property name="rabbitAdmin" ref="rabbitAdmin" />
 		<property name="amqpTemplate" ref="amqpTemplate" />
 		<property name="connectionFactory" ref="connectionFactory" />
 		<property name="service" ref="testService" />

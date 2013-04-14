@@ -78,6 +78,10 @@ public class AmqpProxyFactoryBean extends AmqpClientInterceptor implements Facto
 		return rabbitAdmin;
 	}
 
+	/**
+	 * The RabbitAdmin that is used for creating the service queue on the
+	 * message broker
+	 */
 	public void setRabbitAdmin(RabbitAdmin rabbitAdmin) {
 		this.rabbitAdmin = rabbitAdmin;
 	}
