@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.davidbilge.spring</groupId>
 	<artifactId>spring-remoting-amqp</artifactId>
-	<version>1.0.1</version>
+	<version>1.1-SNAPSHOT</version>
 
 	<name>Spring-Remoting-AMQP</name>
 	<description>A library to use Spring-Remoting via the AMQP protocol.</description>
