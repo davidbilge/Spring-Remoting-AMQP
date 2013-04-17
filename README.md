@@ -59,3 +59,17 @@ On the client-side, use a configuration like this:
 ```
 
 You can then inject the `myServiceProxy` bean into any other bean and call methods on this proxy. This will cause the arguments to be serialized and posted as a message to the queue that was defined by the service previously. A temporary response queue will be established to which the service posts the serialized return object as soon as it is finished. The call to the service proxy method will block until either the service-side method has returned something or the timeout defined on the `rabbit-template` has expired.
+
+Download
+--------
+This library is available via Maven:
+
+```xml
+<dependency>
+  <groupId>de.davidbilge.spring</groupId>
+  <artifactId>spring-remoting-amqp</artifactId>
+  <version>1.0.2</version>
+</dependency>
+```
+
+Or as a [direct download](https://oss.sonatype.org/service/local/repositories/releases/content/de/davidbilge/spring/spring-remoting-amqp/1.0.2/spring-remoting-amqp-1.0.2.jar).
