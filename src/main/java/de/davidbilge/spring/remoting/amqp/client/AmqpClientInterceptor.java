@@ -21,7 +21,6 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
-import org.springframework.remoting.RemoteAccessException;
 import org.springframework.remoting.support.RemoteAccessor;
 
 import de.davidbilge.spring.remoting.amqp.common.CanonicalNameQueueNameStrategy;
@@ -76,7 +75,7 @@ public class AmqpClientInterceptor extends RemoteAccessor implements MethodInter
 				&& !invocation.getMethod().getReturnType().isAssignableFrom(result.getClass())) {
 			// TODO handle for case where exceptions that are not known to the
 			// caller are being thrown (might be nested unchecked exceptions)
-			throw new RemoteAccessException("The called method threw an exception", (Throwable) result);
+			throw (Throwable) result;
 		} else {
 			return result;
 		}
