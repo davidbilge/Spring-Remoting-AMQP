@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+import de.davidbilge.spring.remoting.amqp.clientservice.GeneralException;
+import de.davidbilge.spring.remoting.amqp.clientservice.SpecialException;
 import de.davidbilge.spring.remoting.amqp.clientservice.TestServiceInterface;
 
 @ContextConfiguration("/rabbit-context-clientservice.xml")
@@ -48,6 +50,24 @@ public class ClientServiceMessageSendingTest extends AbstractJUnit4SpringContext
 	@Test(expected = RuntimeException.class)
 	public void testExceptionPropagation() {
 		testServiceProxy.exceptionThrowingMethod();
+	}
+
+	@Test(expected = GeneralException.class)
+	public void testExceptionReturningMethod() {
+		testServiceProxy.notReallyExceptionReturningMethod();
+	}
+
+	@Test
+	public void testActuallyExceptionReturningMethod() {
+		SpecialException returnedException = testServiceProxy.actuallyExceptionReturningMethod();
+
+		Assert.assertNotNull(returnedException);
+		Assert.assertTrue(returnedException instanceof SpecialException);
+	}
+
+	@Test(timeout = 3000)
+	public void testVoidMethodCall() {
+		testServiceProxy.simpleTestMethod();
 	}
 
 	@Test

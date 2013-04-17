@@ -36,4 +36,14 @@ public class TestServiceImpl implements TestServiceInterface {
 	public Object echo(Object o) {
 		return o;
 	}
+
+	@Override
+	public SpecialException notReallyExceptionReturningMethod() {
+		throw new GeneralException("This exception should not be interpreted as a return type but be thrown instead.");
+	}
+
+	@Override
+	public SpecialException actuallyExceptionReturningMethod() {
+		return new SpecialException("This exception should not be thrown on the client side but just be returned!");
+	}
 }

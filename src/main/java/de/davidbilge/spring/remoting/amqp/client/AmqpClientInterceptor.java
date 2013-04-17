@@ -73,9 +73,9 @@ public class AmqpClientInterceptor extends RemoteAccessor implements MethodInter
 		if (invocation.getMethod().getReturnType().getCanonicalName().equals(Void.class.getCanonicalName())) {
 			return null;
 		} else if (result instanceof Throwable
-				&& !Throwable.class.isAssignableFrom(invocation.getMethod().getReturnType())) {
+				&& !invocation.getMethod().getReturnType().isAssignableFrom(result.getClass())) {
 			// TODO handle for case where exceptions that are not known to the
-			// caller
+			// caller are being thrown (might be nested unchecked exceptions)
 			throw new RemoteAccessException("The called method threw an exception", (Throwable) result);
 		} else {
 			return result;

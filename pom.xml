@@ -5,6 +5,12 @@
 	<artifactId>spring-remoting-amqp</artifactId>
 	<version>1.1-SNAPSHOT</version>
 
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
 	<name>Spring-Remoting-AMQP</name>
 	<description>A library to use Spring-Remoting via the AMQP protocol.</description>
 	<developers>

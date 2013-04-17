@@ -24,4 +24,8 @@ public interface TestServiceInterface {
 	void exceptionThrowingMethod();
 
 	Object echo(Object o);
+
+	SpecialException notReallyExceptionReturningMethod();
+
+	SpecialException actuallyExceptionReturningMethod();
 }
