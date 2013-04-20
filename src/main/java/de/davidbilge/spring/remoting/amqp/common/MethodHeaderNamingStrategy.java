@@ -35,6 +35,6 @@ import de.davidbilge.spring.remoting.amqp.service.AmqpServiceExporter;
  * @since 13.04.2013
  * 
  */
-public interface MethodSerializer {
-	String serialize(Method method);
+public interface MethodHeaderNamingStrategy {
+	String generateMethodName(Method method);
 }

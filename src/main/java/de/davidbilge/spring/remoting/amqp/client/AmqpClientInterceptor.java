@@ -24,9 +24,9 @@ import org.springframework.remoting.support.RemoteAccessor;
 
 import de.davidbilge.spring.remoting.amqp.common.CanonicalNameQueueNameStrategy;
 import de.davidbilge.spring.remoting.amqp.common.Constants;
-import de.davidbilge.spring.remoting.amqp.common.MethodSerializer;
+import de.davidbilge.spring.remoting.amqp.common.MethodHeaderNamingStrategy;
 import de.davidbilge.spring.remoting.amqp.common.QueueNameStrategy;
-import de.davidbilge.spring.remoting.amqp.common.SimpleMethodSerializer;
+import de.davidbilge.spring.remoting.amqp.common.SimpleHeaderNamingStrategy;
 import de.davidbilge.spring.remoting.amqp.service.AmqpServiceExporter;
 
 /**
@@ -42,7 +42,7 @@ public class AmqpClientInterceptor extends RemoteAccessor implements MethodInter
 
 	private AmqpTemplate amqpTemplate;
 
-	private MethodSerializer methodSerializer = new SimpleMethodSerializer();
+	private MethodHeaderNamingStrategy methodHeaderNamingStrategy = new SimpleHeaderNamingStrategy();
 
 	private QueueNameStrategy queueNameStrategy = new CanonicalNameQueueNameStrategy();
 
@@ -52,7 +52,7 @@ public class AmqpClientInterceptor extends RemoteAccessor implements MethodInter
 	public Object invoke(MethodInvocation invocation) throws Throwable {
 		MessageProperties messageProperties = new MessageProperties();
 		messageProperties.setHeader(Constants.INVOKED_METHOD_HEADER_NAME,
-				getMethodSerializer().serialize(invocation.getMethod()));
+				methodHeaderNamingStrategy.generateMethodName(invocation.getMethod()));
 
 		Message m = getMessageConverter().toMessage(invocation.getArguments(), messageProperties);
 
@@ -98,18 +98,6 @@ public class AmqpClientInterceptor extends RemoteAccessor implements MethodInter
 		this.queueNameStrategy = queueNameStrategy;
 	}
 
-	public MethodSerializer getMethodSerializer() {
-		return methodSerializer;
-	}
-
-	/**
-	 * A strategy to name methods in the message header for lookup in the service. Make sure to use the same serializer
-	 * on the service side.
-	 */
-	public void setMethodSerializer(MethodSerializer methodSerializer) {
-		this.methodSerializer = methodSerializer;
-	}
-
 	public MessageConverter getMessageConverter() {
 		return messageConverter;
 	}
@@ -125,6 +113,18 @@ public class AmqpClientInterceptor extends RemoteAccessor implements MethodInter
 	 */
 	public void setMessageConverter(MessageConverter messageConverter) {
 		this.messageConverter = messageConverter;
+	}
+
+	public MethodHeaderNamingStrategy getMethodHeaderNamingStrategy() {
+		return methodHeaderNamingStrategy;
+	}
+
+	/**
+	 * A strategy to name methods in the message header for lookup in the service. Make sure to use the same strategy on
+	 * the service side.
+	 */
+	public void setMethodHeaderNamingStrategy(MethodHeaderNamingStrategy methodHeaderNamingStrategy) {
+		this.methodHeaderNamingStrategy = methodHeaderNamingStrategy;
 	}
 
 }

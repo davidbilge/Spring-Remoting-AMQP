@@ -29,8 +29,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.support.RemoteExporter;
 
 import de.davidbilge.spring.remoting.amqp.common.Constants;
-import de.davidbilge.spring.remoting.amqp.common.MethodSerializer;
-import de.davidbilge.spring.remoting.amqp.common.SimpleMethodSerializer;
+import de.davidbilge.spring.remoting.amqp.common.MethodHeaderNamingStrategy;
+import de.davidbilge.spring.remoting.amqp.common.SimpleHeaderNamingStrategy;
 
 /**
  * A convenient superclass for AMQP service exporters, providing an implementation of the {@link MessageListener}
@@ -52,7 +52,7 @@ public class AmqpMessageListener extends RemoteExporter implements MessageListen
 
 	private AmqpTemplate amqpTemplate;
 
-	private MethodSerializer methodSerializer = new SimpleMethodSerializer();
+	private MethodHeaderNamingStrategy methodHeaderNamingStrategy = new SimpleHeaderNamingStrategy();
 
 	private Map<String, Method> methodCache = new HashMap<String, Method>();
 
@@ -62,7 +62,7 @@ public class AmqpMessageListener extends RemoteExporter implements MessageListen
 	public void afterPropertiesSet() throws Exception {
 		Method[] methods = getService().getClass().getMethods();
 		for (Method method : methods) {
-			methodCache.put(methodSerializer.serialize(method), method);
+			methodCache.put(getMethodHeaderNamingStrategy().generateMethodName(method), method);
 		}
 	}
 
@@ -126,18 +126,6 @@ public class AmqpMessageListener extends RemoteExporter implements MessageListen
 		this.amqpTemplate = amqpTemplate;
 	}
 
-	public MethodSerializer getMethodSerializer() {
-		return methodSerializer;
-	}
-
-	/**
-	 * A strategy to name methods in the message header for lookup in the service. Make sure to use the same serializer
-	 * on the client side.
-	 */
-	public void setMethodSerializer(MethodSerializer methodSerializer) {
-		this.methodSerializer = methodSerializer;
-	}
-
 	public MessageConverter getMessageConverter() {
 		return messageConverter;
 	}
@@ -153,6 +141,18 @@ public class AmqpMessageListener extends RemoteExporter implements MessageListen
 	 */
 	public void setMessageConverter(MessageConverter messageConverter) {
 		this.messageConverter = messageConverter;
+	}
+
+	public MethodHeaderNamingStrategy getMethodHeaderNamingStrategy() {
+		return methodHeaderNamingStrategy;
+	}
+
+	/**
+	 * A strategy to name methods in the message header for lookup in the service. Make sure to use the same strategy on
+	 * the client side.
+	 */
+	public void setMethodHeaderNamingStrategy(MethodHeaderNamingStrategy methodHeaderNamingStrategy) {
+		this.methodHeaderNamingStrategy = methodHeaderNamingStrategy;
 	}
 
 }

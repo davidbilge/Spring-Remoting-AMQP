@@ -31,10 +31,10 @@ import java.lang.reflect.Method;
  * @author David
  * 
  */
-public class SimpleMethodSerializer implements MethodSerializer {
+public class SimpleHeaderNamingStrategy implements MethodHeaderNamingStrategy {
 
 	@Override
-	public String serialize(Method method) {
+	public String generateMethodName(Method method) {
 		String name = method.getName();
 		String parameterTypes = serializeParameterTypes(method.getParameterTypes());
 		String returnType = method.getReturnType().getCanonicalName();
