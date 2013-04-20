@@ -13,9 +13,9 @@
 
 package de.davidbilge.spring.remoting.amqp.service;
 
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.serializer.Serializer;
@@ -44,14 +44,14 @@ public class AmqpServiceExporter extends AmqpMessageListener implements Disposab
 
 	private int concurrentConsumers = 1;
 
-	private RabbitAdmin rabbitAdmin;
+	private AmqpAdmin amqpAdmin;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		super.afterPropertiesSet();
 
 		Queue q = new Queue(getQueueNameStrategy().getQueueName(getServiceInterface()));
-		getRabbitAdmin().declareQueue(q);
+		amqpAdmin.declareQueue(q);
 
 		listenerContainer = new SimpleMessageListenerContainer(connectionFactory);
 		listenerContainer.setQueueNames(getQueueNameStrategy().getQueueName(getServiceInterface()));
@@ -105,15 +105,15 @@ public class AmqpServiceExporter extends AmqpMessageListener implements Disposab
 		this.concurrentConsumers = concurrentConsumers;
 	}
 
-	public RabbitAdmin getRabbitAdmin() {
-		return rabbitAdmin;
+	public AmqpAdmin getAmqpAdmin() {
+		return amqpAdmin;
 	}
 
 	/**
-	 * The RabbitAdmin that is used for creating the service queue on the message broker
+	 * The AmqpAdmin that is used for creating the service queue on the message broker
 	 */
-	public void setRabbitAdmin(RabbitAdmin rabbitAdmin) {
-		this.rabbitAdmin = rabbitAdmin;
+	public void setAmqpAdmin(AmqpAdmin amqpAdmin) {
+		this.amqpAdmin = amqpAdmin;
 	}
 
 }
