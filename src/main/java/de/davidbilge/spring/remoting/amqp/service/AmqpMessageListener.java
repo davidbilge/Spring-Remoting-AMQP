@@ -1,22 +1,18 @@
 /*
  * Copyright 2002-2012 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package de.davidbilge.spring.remoting.amqp.service;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -27,30 +23,27 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.support.RemoteExporter;
 
 import de.davidbilge.spring.remoting.amqp.common.Constants;
-import de.davidbilge.spring.remoting.amqp.common.JosSerializer;
 import de.davidbilge.spring.remoting.amqp.common.MethodSerializer;
-import de.davidbilge.spring.remoting.amqp.common.Serializer;
 import de.davidbilge.spring.remoting.amqp.common.SimpleMethodSerializer;
 
 /**
- * A convenient superclass for AMQP service exporters, providing an
- * implementation of the {@link MessageListener} interface.
+ * A convenient superclass for AMQP service exporters, providing an implementation of the {@link MessageListener}
+ * interface.
  * 
  * <p>
- * When receiving a message, a service method is called - which is determined by
- * the {@link Constants#INVOKED_METHOD_HEADER_NAME} header. An exception thrown
- * by the invoked method is serialized and returned to the client as is a
- * regular method return value.
+ * When receiving a message, a service method is called - which is determined by the
+ * {@link Constants#INVOKED_METHOD_HEADER_NAME} header. An exception thrown by the invoked method is serialized and
+ * returned to the client as is a regular method return value.
  * 
  * <p>
- * This listener responds to "Request/Reply"-style messages as described <a
- * href=
- * "http://static.springsource.org/spring-amqp/reference/html/amqp.html#request-reply"
- * >here</a>.
+ * This listener responds to "Request/Reply"-style messages as described <a href=
+ * "http://static.springsource.org/spring-amqp/reference/html/amqp.html#request-reply" >here</a>.
  * 
  * @author David Bilge
  * @since 13.04.2013
@@ -63,7 +56,7 @@ public class AmqpMessageListener extends RemoteExporter implements MessageListen
 
 	private Map<String, Method> methodCache = new HashMap<String, Method>();
 
-	private Serializer serializer = new JosSerializer();
+	private MessageConverter messageConverter = new SimpleMessageConverter();
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -93,9 +86,18 @@ public class AmqpMessageListener extends RemoteExporter implements MessageListen
 			return;
 		}
 
+		Object argumentsRaw = messageConverter.fromMessage(message);
+		Object[] arguments;
+		if (argumentsRaw instanceof Object[]) {
+			arguments = (Object[]) argumentsRaw;
+		} else {
+			send(new RuntimeException("The message does not contain an argument array"), replyToAddress);
+			return;
+		}
+
 		Object retVal;
 		try {
-			retVal = invokedMethod.invoke(getService(), serializer.deserialize(message.getBody()));
+			retVal = invokedMethod.invoke(getService(), arguments);
 		} catch (InvocationTargetException ite) {
 			send(ite.getCause(), replyToAddress);
 			return;
@@ -108,15 +110,7 @@ public class AmqpMessageListener extends RemoteExporter implements MessageListen
 	}
 
 	private void send(Object o, Address replyToAddress) {
-		byte[] serializedReturnValue;
-		try {
-			serializedReturnValue = serializer.serialize(o);
-		} catch (IOException e) {
-			// This really should not happen
-			return;
-		}
-
-		Message m = new Message(serializedReturnValue, new MessageProperties());
+		Message m = messageConverter.toMessage(o, new MessageProperties());
 
 		getAmqpTemplate().send(replyToAddress.getExchangeName(), replyToAddress.getRoutingKey(), m);
 	}
@@ -137,11 +131,28 @@ public class AmqpMessageListener extends RemoteExporter implements MessageListen
 	}
 
 	/**
-	 * A strategy to name methods in the message header for lookup in the
-	 * service. Make sure to use the same serializer on the client side.
+	 * A strategy to name methods in the message header for lookup in the service. Make sure to use the same serializer
+	 * on the client side.
 	 */
 	public void setMethodSerializer(MethodSerializer methodSerializer) {
 		this.methodSerializer = methodSerializer;
+	}
+
+	public MessageConverter getMessageConverter() {
+		return messageConverter;
+	}
+
+	/**
+	 * Set the message converter for this remote service. Used to deserialize arguments to called methods and to
+	 * serialize their return values.
+	 * <p>
+	 * The default converter is a SimpleMessageConverter, which is able to handle byte arrays, Strings, and Serializable
+	 * Objects depending on the message content type header.
+	 * 
+	 * @see org.springframework.amqp.support.converter.SimpleMessageConverter
+	 */
+	public void setMessageConverter(MessageConverter messageConverter) {
+		this.messageConverter = messageConverter;
 	}
 
 }
