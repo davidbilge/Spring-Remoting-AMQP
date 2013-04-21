@@ -28,13 +28,18 @@ import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.support.RemoteExporter;
 
+import de.davidbilge.spring.remoting.amqp.client.AmqpProxyFactoryBean;
 import de.davidbilge.spring.remoting.amqp.common.Constants;
 import de.davidbilge.spring.remoting.amqp.common.MethodHeaderNamingStrategy;
 import de.davidbilge.spring.remoting.amqp.common.SimpleHeaderNamingStrategy;
 
 /**
- * A convenient superclass for AMQP service exporters, providing an implementation of the {@link MessageListener}
- * interface.
+ * This message listener exposes a plain java service via AMQP. Such services can be accessed via plain AMQP or via
+ * {@link AmqpProxyFactoryBean}.
+ * 
+ * To configure this message listener so that it actually receives method calls via AMQP, it needs to be put into a
+ * listener container. That could be spring-rabbit's {@link SimpleMessageConverter}, for example (see below for an
+ * example configuration).
  * 
  * <p>
  * When receiving a message, a service method is called - which is determined by the
@@ -44,6 +49,21 @@ import de.davidbilge.spring.remoting.amqp.common.SimpleHeaderNamingStrategy;
  * <p>
  * This listener responds to "Request/Reply"-style messages as described <a href=
  * "http://static.springsource.org/spring-amqp/reference/html/amqp.html#request-reply" >here</a>.
+ * 
+ * <p>
+ * You could use an (xml) configuration like this:
+ * 
+ * <pre>
+ * &lt;bean id="amqpMessageListener" class="de.davidbilge.spring.remoting.amqp.service.AmqpServiceMessageListener"&gt;
+ *    &lt;property name="amqpTemplate" ref="amqpTemplate" /&gt;
+ *    &lt;property name="service" ref="testService" /&gt;
+ *    &lt;property name="serviceInterface" value="de.davidbilge.spring.remoting.amqp.clientservice.TestServiceInterface" /&gt;
+ * &lt;/bean&gt;
+ * &lt;rabbit:queue id="testQueue" name="TestService" /&gt;
+ * &lt;rabbit:listener-container concurrency="10" connection-factory="connectionFactory"&gt;
+ *   &lt;rabbit:listener ref="amqpMessageListener" queues="testQueue" /&gt;
+ * &lt;/rabbit:listener-container&gt;
+ * </pre>
  * 
  * @author David Bilge
  * @since 13.04.2013

@@ -14,11 +14,14 @@
 package de.davidbilge.spring.remoting.amqp.client;
 
 import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.rmi.RmiServiceExporter;
+
+import de.davidbilge.spring.remoting.amqp.service.AmqpServiceMessageListener;
 
 /**
  * {@link FactoryBean} for AMQP proxies. Exposes the proxied service for use as a bean reference, using the specified
@@ -27,6 +30,9 @@ import org.springframework.remoting.rmi.RmiServiceExporter;
  * <p>
  * This is intended for an "RMI-style" (i.e. synchroneous) usage of the AMQP protocol. Obviously, AMQP allows for a much
  * broader scope of execution styles, which are not the scope of the mechanism at hand.
+ * <p>
+ * Calling a method on the proxy will cause an AMQP message being sent according to the configured {@link AmqpTemplate}.
+ * This can be received and answered by an {@link AmqpServiceMessageListener}.
  * 
  * @author David Bilge
  * @since 13.04.2013
