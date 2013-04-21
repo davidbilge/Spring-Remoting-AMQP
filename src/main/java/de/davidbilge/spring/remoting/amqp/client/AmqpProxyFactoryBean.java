@@ -14,7 +14,6 @@
 package de.davidbilge.spring.remoting.amqp.client;
 
 import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.core.Queue;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.FactoryBean;
@@ -49,9 +48,6 @@ public class AmqpProxyFactoryBean extends AmqpClientInterceptor implements Facto
 			throw new IllegalArgumentException("Property 'serviceInterface' is required");
 		}
 		this.serviceProxy = new ProxyFactory(getServiceInterface(), this).getProxy(getBeanClassLoader());
-
-		Queue q = new Queue(getQueueNameStrategy().getQueueName(getServiceInterface()));
-		amqpAdmin.declareQueue(q);
 	}
 
 	@Override

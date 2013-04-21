@@ -48,7 +48,7 @@ import de.davidbilge.spring.remoting.amqp.common.SimpleHeaderNamingStrategy;
  * @author David Bilge
  * @since 13.04.2013
  */
-public class AmqpMessageListener extends RemoteExporter implements MessageListener, InitializingBean {
+public class AmqpServiceMessageListener extends RemoteExporter implements MessageListener, InitializingBean {
 
 	private AmqpTemplate amqpTemplate;
 
@@ -121,6 +121,10 @@ public class AmqpMessageListener extends RemoteExporter implements MessageListen
 
 	/**
 	 * The AMQP template to use for sending the return value.
+	 * 
+	 * <p>
+	 * Note that the exchange and routing key parameters on this template are ignored for these return messages. Instead
+	 * of those the respective parameters from the original message's <code>returnAddress</code> are being used.
 	 */
 	public void setAmqpTemplate(AmqpTemplate amqpTemplate) {
 		this.amqpTemplate = amqpTemplate;

@@ -22,19 +22,17 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.remoting.support.RemoteAccessor;
 
-import de.davidbilge.spring.remoting.amqp.common.CanonicalNameQueueNameStrategy;
 import de.davidbilge.spring.remoting.amqp.common.Constants;
 import de.davidbilge.spring.remoting.amqp.common.MethodHeaderNamingStrategy;
-import de.davidbilge.spring.remoting.amqp.common.QueueNameStrategy;
 import de.davidbilge.spring.remoting.amqp.common.SimpleHeaderNamingStrategy;
-import de.davidbilge.spring.remoting.amqp.service.AmqpServiceExporter;
+import de.davidbilge.spring.remoting.amqp.service.AmqpServiceMessageListener;
 
 /**
  * {@link org.aopalliance.intercept.MethodInterceptor} for accessing RMI-style AMQP services.
  * 
  * @author David Bilge
  * @since 13.04.2013
- * @see AmqpServiceExporter
+ * @see AmqpServiceMessageListener
  * @see AmqpProxyFactoryBean
  * @see org.springframework.remoting.RemoteAccessException
  */
@@ -44,9 +42,9 @@ public class AmqpClientInterceptor extends RemoteAccessor implements MethodInter
 
 	private MethodHeaderNamingStrategy methodHeaderNamingStrategy = new SimpleHeaderNamingStrategy();
 
-	private QueueNameStrategy queueNameStrategy = new CanonicalNameQueueNameStrategy();
-
 	private MessageConverter messageConverter = new SimpleMessageConverter();
+
+	private String routingKey = null;
 
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {
@@ -56,7 +54,13 @@ public class AmqpClientInterceptor extends RemoteAccessor implements MethodInter
 
 		Message m = getMessageConverter().toMessage(invocation.getArguments(), messageProperties);
 
-		Message resultMessage = amqpTemplate.sendAndReceive(queueNameStrategy.getQueueName(getServiceInterface()), m);
+		Message resultMessage;
+		if (getRoutingKey() == null) {
+			// Use the template's default routing key
+			resultMessage = amqpTemplate.sendAndReceive(m);
+		} else {
+			resultMessage = amqpTemplate.sendAndReceive(getRoutingKey(), m);
+		}
 
 		Object result = getMessageConverter().fromMessage(resultMessage);
 
@@ -86,18 +90,6 @@ public class AmqpClientInterceptor extends RemoteAccessor implements MethodInter
 		this.amqpTemplate = amqpTemplate;
 	}
 
-	public QueueNameStrategy getQueueNameStrategy() {
-		return queueNameStrategy;
-	}
-
-	/**
-	 * Determines how the queue for the proxied service is named. Make sure that this matches the strategy in the
-	 * respective {@link AmqpServiceExporter} on the service side. Defaults to {@link CanonicalNameQueueNameStrategy}.
-	 */
-	public void setQueueNameStrategy(QueueNameStrategy queueNameStrategy) {
-		this.queueNameStrategy = queueNameStrategy;
-	}
-
 	public MessageConverter getMessageConverter() {
 		return messageConverter;
 	}
@@ -125,6 +117,20 @@ public class AmqpClientInterceptor extends RemoteAccessor implements MethodInter
 	 */
 	public void setMethodHeaderNamingStrategy(MethodHeaderNamingStrategy methodHeaderNamingStrategy) {
 		this.methodHeaderNamingStrategy = methodHeaderNamingStrategy;
+	}
+
+	public String getRoutingKey() {
+		return routingKey;
+	}
+
+	/**
+	 * The routing key to send calls to the service with. Use this to route the messages to a specific queue on the
+	 * broker. If not set, the {@link AmqpTemplate}'s default routing key will be used.
+	 * <p>
+	 * This property is useful if you want to use the same AmqpTemplate to talk to multiple services.
+	 */
+	public void setRoutingKey(String routingKey) {
+		this.routingKey = routingKey;
 	}
 
 }
