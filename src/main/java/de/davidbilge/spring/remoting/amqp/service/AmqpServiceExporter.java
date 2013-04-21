@@ -54,7 +54,7 @@ public class AmqpServiceExporter extends AmqpMessageListener implements Disposab
 		amqpAdmin.declareQueue(q);
 
 		listenerContainer = new SimpleMessageListenerContainer(connectionFactory);
-		listenerContainer.setQueueNames(getQueueNameStrategy().getQueueName(getServiceInterface()));
+		listenerContainer.setQueueNames(q.getName());
 
 		listenerContainer.setMessageListener(this);
 
