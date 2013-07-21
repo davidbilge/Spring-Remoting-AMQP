@@ -3,6 +3,16 @@ Spring-Remoting-AMQP
 
 This is a library to use Spring-Remoting via the AMQP protocol.
 
+Important note
+--------------
+
+This library is no longer necessary. Please use Spring-AMQP 1.2 (or higher) instead.
+
+I have contributed the code in this library directly to the Spring-AMQP project. A detailed description of how it works can be found in the [documentation](http://static.springsource.org/spring-amqp/reference/html/amqp.html#remoting).
+
+However, feel free to use this library if you are stuck on an older version of Spring-AMQP.
+
+
 Usage
 -----
 To expose a service via Spring-Remoting-AMQP, you need to first make sure to have created an interface and an implementation for this interface. Both can be POJOs, i.e. they do not need to extend/implement framework-specific interfaces. It is recommended to put the service interface (and all classes and exceptions that are being used by the service methods externally, i.e. as arguments or return parameters) into a common library which is then added as a dependency to both the client and the service.
