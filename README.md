@@ -6,7 +6,7 @@ This is a library to use Spring-Remoting via the AMQP protocol.
 Important note
 --------------
 
-This library is no longer necessary. Please use Spring-AMQP 1.2 (or higher) instead.
+This library is no longer necessary. Please use [Spring-AMQP](http://www.springsource.org/spring-amqp) 1.2 (or higher) instead.
 
 I have contributed the code in this library directly to the Spring-AMQP project. A detailed description of how it works can be found in the [documentation](http://static.springsource.org/spring-amqp/reference/html/amqp.html#remoting).
 
